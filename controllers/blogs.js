@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const { request, response } = require('express')
-const person = require('../../part3/models/person')
 const Blog = require('../models/blogs')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
@@ -19,6 +18,15 @@ blogsRouter.get('/', async (request, response) => {
   .find({}).populate('user', { username: 1, name: 1, id: 1 })
   response.json(blogs)
   })
+
+  blogsRouter.get('/:id', async (request, response, next) => {
+    const blog = await Blog.findById(request.params.id)
+    if (blog) {
+      response.json(blog)
+    } else {
+      response.status(404).end()
+    }
+})
   
   blogsRouter.post('/', async (request, response, next) => {
     const body = request.body
